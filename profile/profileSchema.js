@@ -3,34 +3,33 @@ const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const passportLocalMongoose = require('passport-local-mongoose');
 const validator = require('validator');
 
-const { Schema } = mongoose;
 mongoose.Promise = global.Promise;
 
-const profileSchema = new Schema({
-    _id: Schema.Types.ObjectID,
+const profileSchema = new mongoose.Schema({
+    id: mongoose.Schema.ObjectId,
     createdDate: Date,
     modifiedDate: Date,
     lastLoggedIn: Date,
     email: {
         type: String,
-        unique: true,
-        lowercase: true,
-        trim: true,
         validate: [validator.isEmail, 'Invalid Email Address'],
+        unique: true ,
+        lowercase : true,
+        trim: true,
         required: 'Please supply a valid email address'
     },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
     budgets: [{
-        type: mongoose.Schema.ObjectID,
+        type: mongoose.Schema.ObjectId,
         ref: 'Budget'
     }],
     bills: [{
-        type: mongoose.Schema.ObjectID,
+        type: mongoose.Schema.ObjectId,
         ref: 'Bill'
     }],
     categories: [{
-        type: mongoose.Schema.ObjectID,
+        type: mongoose.Schema.ObjectId,
         ref: 'Category'
     }],
     inLeaderboard: Boolean

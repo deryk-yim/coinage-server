@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 
 const Profile = mongoose.model('Profile');
-const promisify = require('es6-promisify');
+const { promisify } = require('es6-promisify');
 
 exports.login = passport.authenticate('local', {
     failureRedirect: '/login',
@@ -13,9 +13,13 @@ exports.login = passport.authenticate('local', {
 });
 
 exports.register = async(req, res, next) => {
-    const profile = new Profile({ email: req.body.email });
-    const register = promisify(Profile.register, Profile);
-    await register(profile, req.body.password);
+    Profile.register(new Profile({ email: req.body.email }),
+        req.body.password, (err, profile) => {
+            if (err){
+                console.log(err);
+            }
+            console.log(profile);
+        });
     next();
 }
 
@@ -37,7 +41,7 @@ exports.forgot = async (req, res) => {
         email: req.body.email
     });
     if (!profile) {
-        req.flash('error', 'No account with that email exists');
+        //req.flash('error', 'No account with that email exists');
         return res.redirect('/login');
     }
 
@@ -55,7 +59,7 @@ exports.forgot = async (req, res) => {
     });
 
     */
-    req.flash('success', 'Password Reset Link Sent!');
+    //req.flash('success', 'Password Reset Link Sent!');
     res.redirect('/login');
 
 }
@@ -101,7 +105,7 @@ exports.update = async (req, res) => {
 }
 
 exports.validateRegister = (req, res, next) => {
-    req.checkbody('email', 'Email is not valid').isEmail();
+    req.checkBody('email', 'Email is not valid').isEmail();
     req.sanitizeBody('email').normalizeEmail({
         gmail_remove_dots: false,
         remove_extension: false,
@@ -113,9 +117,11 @@ exports.validateRegister = (req, res, next) => {
 
     const errors = req.validationErrors();
     if (errors){
-        req.flash('error', errors.map(err => err.msg));
-        res.render('register', {title: 'Register', body: req.body, flashes: req.flash() });
-        return;
+        //req.flash('error', errors.map(err => err.msg));
+        //res.render('register', {title: 'Register', body: req.body });
+        console.log(req.body);
+        console.log(req);
+        return req;
     }
     next();
 }

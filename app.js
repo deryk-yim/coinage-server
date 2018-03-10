@@ -8,22 +8,25 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
 const passport = require('passport');
-const promisify = require('es6-promisify');
-const expressValidator = require('express-validators');
+const { promisify } = require('es6-promisify');
+const expressValidator = require('express-validator');
+const errorHandlers = require('./middleware/errorHandlers');
 const helpers = require('./helpers/index');
 
 require('dotenv').config({path: 'variables.env'});
-require('./middleware/passport');
-
 
 mongoose.connect(process.env.DATABASE);
 mongoose.Promise = global.Promise;
 mongoose.connection.on('error', (err) => {
-  console.error(`${err.messagE}`);
+  console.error(`${err.message}`);
 });
 
 // IMPORT MODELS
-require('./profile/profileSchema.js');
+require('./profile/profileSchema');
+require('./middleware/passport');
+
+
+
 
 // IMPORT ROUTES
 const profile = require('./profile/index');
@@ -71,6 +74,7 @@ app.use((req, res, next) => {
 
 app.use('/profile', profile);
 app.use('/', index);
+app.use(errorHandlers.notFound);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) =>{

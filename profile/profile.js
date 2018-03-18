@@ -12,13 +12,13 @@ exports.login = passport.authenticate('local', {
     successMessage: 'Login Successful'
 });
 
-exports.register = async(req, res, next) => {
+exports.register = async (req, res, next) => {
     Profile.register(new Profile({ email: req.body.email }),
         req.body.password, (err, profile) => {
             if (err){
                 console.log(err);
             }
-            console.log(profile);
+            req.redirect('/'); 
         });
     next();
 }

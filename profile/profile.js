@@ -5,12 +5,9 @@ const mongoose = require('mongoose');
 const Profile = mongoose.model('Profile');
 const { promisify } = require('es6-promisify');
 
-exports.login = passport.authenticate('local', {
-    failureRedirect: '/login',
-    failureMesssage: 'Login Failed',
-    sucessRedirect: '/',
-    successMessage: 'Login Successful'
-});
+exports.login = (req, res) => {
+    res.redirect('/');
+};
 
 exports.register = async(req, res, next) => {
     Profile.register(new Profile({ email: req.body.email }),
@@ -60,7 +57,7 @@ exports.forgot = async (req, res) => {
 
     */
     //req.flash('success', 'Password Reset Link Sent!');
-    res.redirect('/login');
+    res.redirect('/');
 
 }
 

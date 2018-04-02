@@ -22,6 +22,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 // IMPORT MODELS
+require('./category/categorySchema');
 require('./profile/profileSchema');
 require('./middleware/passport');
 
@@ -30,6 +31,7 @@ require('./middleware/passport');
 
 // IMPORT ROUTES
 const profile = require('./profile/index');
+const category = require('./category/index');
 const index = require('./routes/index');
 
 const app = express();
@@ -72,6 +74,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/category', category);
 app.use('/profile', profile);
 app.use('/', index);
 app.use(errorHandlers.notFound);

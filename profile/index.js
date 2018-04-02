@@ -5,19 +5,28 @@ const passport = require('passport');
 
 const router = express.Router();
 
+
 router.get('/', (req, res, next) => {
-    res.render('index', {title: 'Express'});
+    res.sendStatus(200);
 });
 
-router.post('/register', controller.validateRegister, controller.register, controller.login);
+router.post('/login', controller.login);
 
-router.post('/login', passport.authenticate('local'), catchErrors(controller.login));
+router.post('/register', 
+    controller.validateRegister, 
+    controller.register 
+);
+
+
 router.post('/logout', controller.logout);
 
-router.get('/reset/:token', catchErrors(controller.reset));
-router.post('/reset/:token', controller.confirmedPassword, catchErrors(controller.update));
+router.get('/reset/:token', controller.reset);
+router.post('/reset/:token', 
+    controller.confirmedPassword, 
+    controller.update
+);
 
-router.post('/forgot', catchErrors(controller.forgot));
+router.post('/forgot', controller.forgot);
 router.post('/update');
 
 

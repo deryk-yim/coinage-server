@@ -5,9 +5,8 @@ const validator = require('validator');
 const { Schema } = mongoose;
 
 let categorySchema = new Schema({
-    _id: Integer,
+    id: mongoose.Schema.ObjectId,
     name: String,
-    subCategory:  Array[Object],
     isIncome: Boolean,
     createdDate:{
         type: Date,

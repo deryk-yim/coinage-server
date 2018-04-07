@@ -8,11 +8,9 @@ exports.getCategories = (req, res, next) => {
     Category.find({_pid: req.params.pid})
     .exec()
     .then(categories => {
-        console.log(categories);
         res.send(categories);
     })
     .catch(err => {
-        console.log(err);
         res.status(404).json({ error: err })
     })
 }
@@ -37,11 +35,9 @@ exports.createCategory = (req, res, next) => {
     )
     .exec()
     .then(result => {
-        console.log(result);
         res.status(201).json(result);
     })
     .catch(err => {
-        console.log(err);
         res.status(404).json({error: err})
     })
     
@@ -69,11 +65,9 @@ exports.createCategories = (req, res, next) => {
     )
     .exec()
     .then(result => {
-        console.log(result);
         res.status(200).json(result);
     })
     .catch(err => {
-        console.log(err);
         res.status(404).json({error: err});
     })
 }
@@ -93,11 +87,9 @@ exports.updateCategory = (req, res, next) => {
     )
     .exec()
     .then( result => {
-        console.log(result);
         res.status(200).json(result)
     })
     .catch(err => {
-        console.log(err);
         res.status(404).json({ error: err})
     })
 }
@@ -113,11 +105,9 @@ exports.checkDefault = (req, res, next) => {
             )
             .exec()
             .then(updateResult => {
-                console.log(updateResult);
                 res.status(200).json({ updateResult })
             })
             .catch(err => {
-                console.log(err);
                 res.status(404).json({ error: err })
             })
         } else {
@@ -125,7 +115,6 @@ exports.checkDefault = (req, res, next) => {
         }
     })
     .catch(err => {
-        console.log(err);
         res.status(404).json({error: err});
     }) 
 }
@@ -133,13 +122,11 @@ exports.checkDefault = (req, res, next) => {
 exports.deleteCategory = (req, res, next) => { 
     Category.remove({_id: req.params.id})
     .exec()
-    .then(result => {
+    .then((result) => {
         console.log(result);
-        // res.status(200).json({ result })
         next();
     })
     .catch( err => {
-        console.log(err);
         res.status(404).json({ error: err })
     })
 }
@@ -151,11 +138,9 @@ exports.deleteProfileCategory = (req, res, next) => {
     )
     .exec()
     .then(result => {
-        console.log(result);
         res.status(200).json({ result })
     })
     .catch(err => {
-        console.log(err);
         res.status(404).json({ Error: err });
     })
 }

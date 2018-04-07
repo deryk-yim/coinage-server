@@ -5,19 +5,23 @@ const categorySchema = mongoose.Schema({
     _pid: mongoose.Schema.ObjectId,
     name: {
         type: String,
-        default: 'New Category'
+        default: 'New Category',
+        required: true
     },
     isIncome: {
         type: Boolean,
-        default: false
+        default: false,
+        required: true
     },
     default: {
         type: Boolean,
-        default: false
+        default: false,
+        required: true
     },
     isVisible: {
         type: Boolean,
-        default: true
+        default: true,
+        required: true
     },
     createdDate:{ 
         type: Date,

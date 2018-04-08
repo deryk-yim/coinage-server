@@ -22,11 +22,8 @@ mongoose.connection.on('error', (err) => {
 });
 
 // IMPORT MODELS
-<<<<<<< HEAD
 require('./category/categorySchema');
-=======
 require('./budget/budgetSchema');
->>>>>>> refs/remotes/origin/master
 require('./profile/profileSchema');
 require('./middleware/passport');
 
@@ -36,12 +33,8 @@ require('./middleware/passport');
 // IMPORT ROUTES
 const budget = require('./budget/index');
 const profile = require('./profile/index');
-<<<<<<< HEAD
 const category = require('./category/index');
-const index = require('./routes/index');
-=======
-//const index = require('./routes/index');
->>>>>>> refs/remotes/origin/master
+
 
 const app = express();
 
@@ -83,11 +76,8 @@ app.use((req, res, next) => {
   next();
 });
 
-<<<<<<< HEAD
 app.use('/category', category);
-=======
 app.use('/budget', budget);
->>>>>>> refs/remotes/origin/master
 app.use('/profile', profile);
 //app.use('/', index);
 app.use(errorHandlers.notFound);

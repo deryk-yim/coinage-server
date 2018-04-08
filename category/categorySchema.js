@@ -1,18 +1,34 @@
-let mongoose = require('mongoose');
-const mongodbErrorHandler = require('mongoose-mongodb-errors');
-const validator = require('validator');
+const mongoose = require('mongoose');
 
-const { Schema } = mongoose;
-
-let categorySchema = new Schema({
-    id: mongoose.Schema.ObjectId,
-    name: String,
-    isIncome: Boolean,
-    createdDate:{
+const categorySchema = mongoose.Schema({
+    _id: mongoose.Schema.ObjectId,
+    _pid: mongoose.Schema.ObjectId,
+    name: {
+        type: String,
+        default: 'New Category',
+        required: true
+    },
+    isIncome: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    default: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    isVisible: {
+        type: Boolean,
+        default: true,
+        required: true
+    },
+    createdDate:{ 
         type: Date,
         default: Date.now
     },
-    modifiedDate: Date
+    modifiedDate: Date,
+
 });
 
 module.exports = mongoose.model('Category', categorySchema);

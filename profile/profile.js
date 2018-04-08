@@ -5,27 +5,44 @@ const mongoose = require('mongoose');
 const Profile = mongoose.model('Profile');
 const { promisify } = require('es6-promisify');
 
-exports.login = passport.authenticate('local', {
-    failureRedirect: '/login',
-    failureMesssage: 'Login Failed',
-    sucessRedirect: '/',
-    successMessage: 'Login Successful'
-});
 
-exports.register = async(req, res, next) => {
+exports.login = (req, res) => {
+    try {
+        passport.authenticate('local')(req, res, () => {
+            req.session.save((error) => {
+                if (error) {
+                    return res.status(400).send({ 'error': error });
+                }
+            return res.status(200).json(req.user);
+            });
+        });
+    }
+    catch (ex){
+        return res.status(400).send({ 'error': ex.message });
+    }
+};
+
+exports.register = async (req, res, next) => {
     Profile.register(new Profile({ email: req.body.email }),
         req.body.password, (err, profile) => {
             if (err){
-                console.log(err);
+                res.status(400).send({ 'error': err});
+                return;
             }
-            console.log(profile);
+            passport.authenticate('local')(req, res, () => {
+                req.session.save((error) => {
+                    if (error) {
+                        return next(error);
+                    }
+                    return res.status(201).json(req.user);
+                });
+            });
         });
-    next();
 }
 
 exports.logout = (req, res) => {
     req.logout();
-    res.redirect('/');
+    res.sendStatus(200);
 }
 
 exports.isLoggedIn = (req, res, next) => {
@@ -33,16 +50,20 @@ exports.isLoggedIn = (req, res, next) => {
         next();
         return;
     };
-    req.redirect('/')    
+    res.sendStatus(401);
 }
 
+// STILL NEED WORK
 exports.forgot = async (req, res) => {
     const profile = await Profile.findOne({
         email: req.body.email
     });
     if (!profile) {
-        //req.flash('error', 'No account with that email exists');
-        return res.redirect('/login');
+        return res.status(400).json({
+        'error': {
+            'name': 'UserDoesntExist',
+            'message': 'The User does not exist.'
+        }});
     }
 
     profile.resetPasswordToken = crypto.randomBytes(20).toString('hex');
@@ -60,10 +81,11 @@ exports.forgot = async (req, res) => {
 
     */
     //req.flash('success', 'Password Reset Link Sent!');
-    res.redirect('/login');
+    res.sendStatus(200);
 
 }
 
+// still need work
 exports.reset = async (req, res) => {
     const profile = await Profile.findOne({
         resetPasswordToken: req.params.token,
@@ -71,10 +93,14 @@ exports.reset = async (req, res) => {
     });
 
     if(!profile){
-        return res.redirect('/login');
+        return res.status(400).json({
+        'error': {
+            'name': 'UserDoesntExist',
+            'message': 'The User does not exist.'
+        }});
     }
 
-    return res.redirect('/reset');
+    return res.sendStatus(200);
 }
 
 exports.confirmedPassword = (req, res, next) => {
@@ -82,7 +108,11 @@ exports.confirmedPassword = (req, res, next) => {
         next();
     }
 
-    res.redirect('back');
+    return res.status(400).json({
+        'error': {
+            'name': 'PasswordDoesNotMatch',
+            'message': 'The passwords given does not match'
+    }});
 }
 
 exports.update = async (req, res) => {
@@ -92,7 +122,11 @@ exports.update = async (req, res) => {
     });
 
     if (!profile) {
-        return res.redirect('/login');
+        return res.status(400).json({
+        'error': {
+            'name': 'UserDoesntExist',
+            'message': 'The User does not exist.'
+        }});
     }
 
     const setPassword = promisify(profile.setPassword, profile);
@@ -101,7 +135,7 @@ exports.update = async (req, res) => {
     profile.resetPasswordToken = undefined;
     const updatedProfile = await profile.save();
     await req.login(updatedProfile);
-    res.redirect('/');
+    res.status(200).json(req.user);
 }
 
 exports.validateRegister = (req, res, next) => {
@@ -117,11 +151,8 @@ exports.validateRegister = (req, res, next) => {
 
     const errors = req.validationErrors();
     if (errors){
-        //req.flash('error', errors.map(err => err.msg));
-        //res.render('register', {title: 'Register', body: req.body });
-        console.log(req.body);
-        console.log(req);
-        return req;
+        res.status(400).send({ 'error': errors});
+        return;
     }
     next();
 }

@@ -22,6 +22,11 @@ mongoose.connection.on('error', (err) => {
 });
 
 // IMPORT MODELS
+<<<<<<< HEAD
+require('./category/categorySchema');
+=======
+require('./budget/budgetSchema');
+>>>>>>> refs/remotes/origin/master
 require('./profile/profileSchema');
 require('./middleware/passport');
 
@@ -29,14 +34,20 @@ require('./middleware/passport');
 
 
 // IMPORT ROUTES
+const budget = require('./budget/index');
 const profile = require('./profile/index');
+<<<<<<< HEAD
+const category = require('./category/index');
 const index = require('./routes/index');
+=======
+//const index = require('./routes/index');
+>>>>>>> refs/remotes/origin/master
 
 const app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -61,7 +72,7 @@ app.use(passport.session());
 
 app.use((req, res, next) => {
   res.locals.h = helpers;
-  res.locals.profile = req.profile || null;
+  res.locals.user = req.user || null;
   res.locals.currentPath = req.path;
   res.locals.session = req.session;
   next();
@@ -72,8 +83,13 @@ app.use((req, res, next) => {
   next();
 });
 
+<<<<<<< HEAD
+app.use('/category', category);
+=======
+app.use('/budget', budget);
+>>>>>>> refs/remotes/origin/master
 app.use('/profile', profile);
-app.use('/', index);
+//app.use('/', index);
 app.use(errorHandlers.notFound);
 
 // catch 404 and forward to error handler
@@ -90,8 +106,10 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+res.status(err.status || 500).json({
+        message: err.message,
+        error: err
+    });
 });
 
 module.exports = app;

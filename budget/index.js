@@ -4,10 +4,8 @@ const {catchErrors} = require('../middleware/errorHandlers');
 
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-    res.render('index', {title: 'Express'});
-});
-
-router.post('/', catchErrors(controller.createBudget));
-router.post('/update/:id', catchErrors(controller.updateBudget));
+// router.post('/', controller.createBudget);
+router.post('/', controller.createBudgets);
+router.post('/update/:id', controller.updateBudget);
+router.delete('/', controller.deleteBudget);
 module.exports = router;

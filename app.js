@@ -24,6 +24,8 @@ mongoose.connection.on('error', (err) => {
 // IMPORT MODELS
 require('./category/categorySchema');
 require('./budget/budgetSchema');
+require('./bill/billSchema');
+require('./transaction/transactionSchema');
 require('./profile/profileSchema');
 require('./middleware/passport');
 
@@ -34,6 +36,8 @@ require('./middleware/passport');
 const budget = require('./budget/index');
 const profile = require('./profile/index');
 const category = require('./category/index');
+const bill = require('./bill/index');
+const transaction = require('./transaction/index');
 
 
 const app = express();
@@ -78,6 +82,8 @@ app.use((req, res, next) => {
 
 app.use('/category', category);
 app.use('/budget', budget);
+app.use('/bill', bill);
+app.use('/transaction', transaction);
 app.use('/profile', profile);
 //app.use('/', index);
 app.use(errorHandlers.notFound);

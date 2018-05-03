@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "mocha -u bdd -R spec -t 500 --recursive --exit"
   },
   "dependencies": {
     "body-parser": "~1.18.2",

@@ -110,7 +110,7 @@ exports.deleteProfileBill = (req, res, next) => {
 exports.deleteAllTransactionsInBill = (req, res, next) => {
   Bill.update(
     { _id: req.params.id },
-    { $set: { bills: [] }}
+    { $set: { transactions: [] }}
   )
   .exec()
   .then(result => {
@@ -135,4 +135,20 @@ exports.updateBillById = (req, res, next) => {
     .catch(err => {
       res.status(404).json({ error: err })
     })
+};
+
+exports.deleteAllProfileBills = (req, res, next) => {
+  Profile.update(
+    { _id: req.params.id },
+    { $set: { bills: [] }}
+  )
+  .exec()
+  .then(result => {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(result);
+    next();
+  })
+  .catch(err => {
+    res.status(404).json({ Error: err });
+  })
 };

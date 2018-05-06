@@ -88,7 +88,9 @@ exports.createTransaction = (req, res, next) => {
     .then(result => {
       res.setHeader('Content-Type', 'application/json');
       res.status(201).json(result);
-      next();
+      if (req.params.isBill == true) {
+        next();
+      }
     })
     .catch(err => {
       res.status(404).json({ error: err })
@@ -97,49 +99,47 @@ exports.createTransaction = (req, res, next) => {
 
 
 exports.addTransactionToBill = (req, res, next) => {
-  if(req.params.isBill == true) {
+  if (req.params.isBill == true) {
     Transaction.findById(req.params.id)
-    .exec()
-    .then((transaction) => {
-      Bill.update(
-        { _id: req.params.bid },
-        { $addToSet: { transactions: transaction} }
-      )
-    .exec()
-    })
-    .then(result => {
-      res.setHeader('Content-Type', 'application/json');
-      res.status(201).json(result);
-    })
-    .catch(err => {
-      res.status(404).json({ error: err })
-    })
+      .exec()
+      .then((transaction) => {
+        Bill.update(
+          { _id: req.params.bid },
+          { $addToSet: { transactions: transaction } }
+        )
+          .exec()
+      })
+      .then(result => {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(201).json(result);
+      })
+      .catch(err => {
+        res.status(404).json({ error: err })
+      })
   }
 };
 
 exports.deleteTransactionFromBill = (req, res, next) => {
-  if(req.isBill == true) {
+  if (req.params.isBill == false) {
     Transaction.findById(req.params.id)
-    .exec()
-    .then((transaction) => {
-      Bill.update(
-        { _id: req.params.bid },
-        { $pull: { transactions: transaction } }
-      )
       .exec()
-    })
-    .then(result => {
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({ result })
-      next();
-    })
-    .catch(err => {
-      res.status(404).json({ Error: err });
-    })
-  }
+      .then((transaction) => {
+        Bill.update(
+          { _id: req.params.bid },
+          { $pull: { transactions: transaction } }
+        )
+          .exec()
+      })
+      .then(result => {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json({ result })
+        next();
+      })
+      .catch(err => {
+        res.status(404).json({ Error: err });
+      })
+    }
 };
-
-
 
 exports.deleteTransactionById = (req, res, next) => {
   Transaction.findByIdAndRemove(req.params.id)
@@ -175,17 +175,23 @@ exports.deleteProfileTransaction = (req, res, next) => {
 };
 
 exports.updateTransactionById = (req, res, next) => {
+  let flag = false;
   Transaction.findById(req.params.id)
-  .exec()
+    .exec()
     .then((transaction) => {
+      if(transaction.isBill == false && req.params.isBill == true) {
+        flag = true;
+      }
       Transaction.update(
         { _id: req.params.id },
         { $set: req.body }
       )
     })
-    .then(result => {
+    .then((result, transaction) => {
       res.status(200).json(result)
-      next();
+      if (flag) {
+        next();
+      }
     })
     .catch(err => {
       res.status(404).json({ error: err })

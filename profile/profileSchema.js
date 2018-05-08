@@ -32,6 +32,10 @@ const profileSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Category'
     }],
+    transactions : [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Transaction'
+    }],
     inLeaderboard: Boolean
     
 });

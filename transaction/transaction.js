@@ -49,7 +49,7 @@ exports.getTransactionsByBillId = (req, res, next) => {
 
 };
 
-exports.createTransactions = (req, res, next) => {
+exports.createTransactions = (req, res) => {
   const newTransactions = req.body.map((newData, index) => {
     const transaction = new Transaction({
       _pid: req.params.pid,
@@ -88,7 +88,7 @@ exports.createTransaction = (req, res, next) => {
     .then(result => {
       res.setHeader('Content-Type', 'application/json');
       res.status(201).json(result);
-      if (req.params.isBill == true) {
+      if (req.params.isBill === true) {
         next();
       }
     })
@@ -99,7 +99,7 @@ exports.createTransaction = (req, res, next) => {
 
 
 exports.addTransactionToBill = (req, res, next) => {
-  if (req.params.isBill == true) {
+  if (req.params.isBill === true) {
     Transaction.findById(req.params.id)
       .exec()
       .then((transaction) => {
@@ -120,7 +120,7 @@ exports.addTransactionToBill = (req, res, next) => {
 };
 
 exports.deleteTransactionFromBill = (req, res, next) => {
-  if (req.params.isBill == false) {
+  if (req.params.isBill === false) {
     Transaction.findById(req.params.id)
       .exec()
       .then((transaction) => {
@@ -179,7 +179,7 @@ exports.updateTransactionById = (req, res, next) => {
   Transaction.findById(req.params.id)
     .exec()
     .then((transaction) => {
-      if(transaction.isBill == false && req.params.isBill == true) {
+      if(transaction.isBill === false && req.params.isBill === true) {
         flag = true;
       }
       Transaction.update(

@@ -8,12 +8,15 @@ exports.getCategories = (req, res, next) => {
     Category.find({_pid: req.params.pid})
     .exec()
     .then(categories => {
+        res.setHeader('Content-Type', 'application/json');
         res.send(categories);
     })
     .catch(err => {
         res.status(404).json({ error: err })
     })
 }
+
+
 
 exports.createCategory = (req, res, next) => {    
     const category = new Category({

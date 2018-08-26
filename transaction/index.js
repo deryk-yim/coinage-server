@@ -9,7 +9,7 @@ router.post('/:pid/:id', controller.getTransactionById);
 router.post('/bill/:pid/:bid', controller.getTransactionsByBillId);
 router.post('/create/1/:pid', controller.createTransaction, controller.addTransactionToBill);
 router.post('/create/2/:pid', controller.createTransactions);
-router.delete('/delete/:pid/:id', controller.deleteTransactionFromBill, controller.deleteProfileTransaction, controller.deleteTransactionById);
+router.delete('/delete/:pid/:id', controller.deleteProfileTransaction, controller.deleteTransactionById);
 router.put('/update/:pid/:id', controller.updateTransactionById, controller.addTransactionToBill, controller.deleteTransactionFromBill);
 
 module.exports = router;

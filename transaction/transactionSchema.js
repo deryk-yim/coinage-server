@@ -1,4 +1,4 @@
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const validator = require('validator');
 
@@ -22,7 +22,6 @@ const transactionSchema = new Schema({
     type: Currency,
     min: 0,
     required: true
-
   },
   category: {
       type: mongoose.Schema.ObjectId,

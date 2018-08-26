@@ -3,10 +3,11 @@ const Transaction = mongoose.model('Transaction');
 const Profile = mongoose.model('Profile');
 const Bill = mongoose.model('Bill');
 
+
 exports.getTransactions = (req, res, next) => {
   Transaction.find({
     _pid: req.params.pid
-  })
+  }).populate('category')
     .exec()
     .then((transactions) => {
       res.setHeader('Content-Type', 'application/json');
@@ -77,23 +78,28 @@ exports.createTransactions = (req, res) => {
 };
 
 exports.createTransaction = (req, res, next) => {
-  Transaction.create(req.body)
-    .then((transaction) => {
-      Profile.update(
+    const transaction = new Transaction({
+      _pid: req.params.pid,
+      _id: new mongoose.Types.ObjectId(),
+  });
+    const keys = Object.keys(req.body);
+    const values = Object.values(req.body);
+    for (let i = 0; i < keys.length; i += 1) {
+      transaction[keys[i]] = values[i];
+    }
+
+    Transaction.collection.insertOne(transaction);
+
+    Profile.update(
         { _id: req.params.pid },
-        { $addToSet: { transactions: transaction } }
-      )
-        .exec()
-    })
+        { $addToSet: { transactions: transaction}}
+    )
+    .exec()
     .then(result => {
-      res.setHeader('Content-Type', 'application/json');
-      res.status(201).json(result);
-      if (req.params.isBill === true) {
-        next();
-      }
+        res.status(201).json(result);
     })
     .catch(err => {
-      res.status(404).json({ error: err })
+        res.status(404).json({error: err})
     })
 };
 

@@ -5,9 +5,11 @@ const Bill = mongoose.model('Bill');
 
 
 exports.getTransactions = (req, res, next) => {
+  const perPage = 10;
+  const page = req.params.page || 1;
   Transaction.find({
     _pid: req.params.pid
-  }).populate('category')
+  }).populate('category').sort({transactionDate: -1}).skip((perPage * page) - perPage).limit(perPage)
     .exec()
     .then((transactions) => {
       res.setHeader('Content-Type', 'application/json');
@@ -19,6 +21,45 @@ exports.getTransactions = (req, res, next) => {
       })
     }))
 };
+
+exports.getCountTransactions = (req, res) => {
+  Transaction.find({
+    _pid: req.params.pid
+  }).count()
+  .exec()
+  .then((results) => {
+    res.json({
+      data: results
+    })
+  })
+  .catch((err => {
+    console.log(err);
+    res.status(404).json({
+      error: err
+    })
+  }))
+};
+
+exports.getTransactionsByDate = (req, res, next) => {
+  Transaction.find({
+    _pid: req.params.pid,
+    $date: {
+      $gte: req.paras.fromDate,
+      $lt: req.paras.todayDate
+    }
+  }).populate('category').sort({transactionDate: -1})
+    .exec()
+    .then((transactions) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.json(transactions);
+    })
+    .catch((err => {
+      res.status(404).json({
+        error: err
+      })
+    }))
+};
+
 
 exports.getTransactionById = (req, res, next) => {
   Transaction.findById(req.params.id)

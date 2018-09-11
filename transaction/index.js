@@ -4,7 +4,8 @@ const {catchErrors} = require('../middleware/errorHandlers');
 
 const router = express.Router();
 
-router.post('/:pid', controller.getTransactions);
+router.post('/:pid/:page', controller.getTransactions);
+router.post('/count/:pid/', controller.getCountTransactions);
 router.post('/:pid/:id', controller.getTransactionById);
 router.post('/bill/:pid/:bid', controller.getTransactionsByBillId);
 router.post('/create/1/:pid', controller.createTransaction, controller.addTransactionToBill);

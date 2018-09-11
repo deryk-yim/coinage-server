@@ -1,14 +1,14 @@
 let mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const importSchema = new Schema({
+const exportSchema = new Schema({
     _id: mongoose.Schema.ObjectId,
     _pid: mongoose.Schema.ObjectId,
-    importType: {
+    exportType: {
         type: String,
         required: true
     },
-    importFileName: {
+    exportFileName: {
         type: String,
         required: true
     },
@@ -17,18 +17,10 @@ const importSchema = new Schema({
         default: Date.now,
         required: true
     },
-    recordsAdded: {
+    recordsExported: {
         type: String,
         required: false
-    },
-    errorMessage: {
-        type: String,
-        required: false
-    },
-    errorContent: {
-        type: String,
-        required: false
-    }    
+    }  
 });
 
-module.exports = mongoose.model('Import', importSchema);
+module.exports = mongoose.model('Export', exportSchema);

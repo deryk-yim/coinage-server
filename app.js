@@ -27,14 +27,13 @@ require('./budget/budgetSchema');
 require('./bill/billSchema');
 require('./transaction/transactionSchema');
 require('./import/importSchema');
+require('./export/exportSchema');
 require('./profile/profileSchema');
 require('./middleware/passport');
 
-
-
-
 // IMPORT ROUTES
 const importRecord = require('./import/index');
+const exportRecord = require('./export/index');
 const budget = require('./budget/index');
 const profile = require('./profile/index');
 const category = require('./category/index');
@@ -94,6 +93,7 @@ app.use('/budget', budget);
 app.use('/bill', bill);
 app.use('/transaction', transaction);
 app.use('/import', importRecord);
+app.use('/export', exportRecord);
 app.use('/profile', profile);
 //app.use('/', index);
 app.use(errorHandlers.notFound);

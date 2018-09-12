@@ -12,7 +12,7 @@ const transactionSchema = new Schema({
   _bid: mongoose.Schema.ObjectId,  
   transactionDate: {
     type: Date,
-    required: true  
+    required: true
   },
   description: {
     type: String,

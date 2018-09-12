@@ -22,12 +22,13 @@ exports.getTransactions = (req, res, next) => {
     }))
 };
 
-exports.getCountTransactions = (req, res) => {
+exports.getCountTransactions = (req, res, next) => {
   Transaction.find({
     _pid: req.params.pid
   }).count()
   .exec()
   .then((results) => {
+    res.setHeader('Content-Type', 'application/json');
     res.json({
       data: results
     })

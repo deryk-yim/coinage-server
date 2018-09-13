@@ -26,13 +26,14 @@ require('./category/categorySchema');
 require('./budget/budgetSchema');
 require('./bill/billSchema');
 require('./transaction/transactionSchema');
+require('./import/importSchema');
+require('./export/exportSchema');
 require('./profile/profileSchema');
 require('./middleware/passport');
 
-
-
-
 // IMPORT ROUTES
+const importRecord = require('./import/index');
+const exportRecord = require('./export/index');
 const budget = require('./budget/index');
 const profile = require('./profile/index');
 const category = require('./category/index');
@@ -80,10 +81,19 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', "*"); 
+  res.header('Access-Control-Allow-Methods','GET,PUT,POST,DELETE'); 
+  res.header('Access-Control-Allow-Headers', 'Content-Type'); 
+  next(); 
+});
+
 app.use('/category', category);
 app.use('/budget', budget);
 app.use('/bill', bill);
 app.use('/transaction', transaction);
+app.use('/import', importRecord);
+app.use('/export', exportRecord);
 app.use('/profile', profile);
 //app.use('/', index);
 app.use(errorHandlers.notFound);

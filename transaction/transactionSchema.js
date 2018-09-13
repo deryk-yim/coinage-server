@@ -1,15 +1,19 @@
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const validator = require('validator');
 
-const Currency = require('mongoose-Currency');
+const Currency = require('mongoose-currency');
 
 const { Schema } = mongoose;
 
 const transactionSchema = new Schema({
   _id: mongoose.Schema.ObjectId,
   _pid: mongoose.Schema.ObjectId,
-  _bid: mongoose.Schema.ObjectId,
+  _bid: mongoose.Schema.ObjectId,  
+  transactionDate: {
+    type: Date,
+    required: true
+  },
   description: {
     type: String,
     required: true
@@ -17,10 +21,6 @@ const transactionSchema = new Schema({
   amount: {
     type: Currency,
     min: 0,
-    required: true
-  },
-  currency: {
-    type: String,
     required: true
   },
   category: {
@@ -34,11 +34,11 @@ const transactionSchema = new Schema({
   },
   isBill: {
     type: Boolean,
-    default: true
+    default: false
   },
   isImport: {
     type: Boolean,
-    default: false,
+    default: false
   },
   isIncome: {
     type: Boolean,

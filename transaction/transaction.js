@@ -3,10 +3,13 @@ const Transaction = mongoose.model('Transaction');
 const Profile = mongoose.model('Profile');
 const Bill = mongoose.model('Bill');
 
+
 exports.getTransactions = (req, res, next) => {
+  const perPage = 10;
+  const page = req.params.page || 1;
   Transaction.find({
     _pid: req.params.pid
-  })
+  }).populate('category').sort({transactionDate: -1}).skip((perPage * page) - perPage).limit(perPage)
     .exec()
     .then((transactions) => {
       res.setHeader('Content-Type', 'application/json');
@@ -18,6 +21,46 @@ exports.getTransactions = (req, res, next) => {
       })
     }))
 };
+
+exports.getCountTransactions = (req, res, next) => {
+  Transaction.find({
+    _pid: req.params.pid
+  }).count()
+  .exec()
+  .then((results) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.json({
+      data: results
+    })
+  })
+  .catch((err => {
+    console.log(err);
+    res.status(404).json({
+      error: err
+    })
+  }))
+};
+
+exports.getTransactionsByDate = (req, res, next) => {
+  Transaction.find({
+    _pid: req.params.pid,
+    $date: {
+      $gte: req.paras.fromDate,
+      $lt: req.paras.todayDate
+    }
+  }).populate('category').sort({transactionDate: -1})
+    .exec()
+    .then((transactions) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.json(transactions);
+    })
+    .catch((err => {
+      res.status(404).json({
+        error: err
+      })
+    }))
+};
+
 
 exports.getTransactionById = (req, res, next) => {
   Transaction.findById(req.params.id)
@@ -49,7 +92,7 @@ exports.getTransactionsByBillId = (req, res, next) => {
 
 };
 
-exports.createTransactions = (req, res, next) => {
+exports.createTransactions = (req, res) => {
   const newTransactions = req.body.map((newData, index) => {
     const transaction = new Transaction({
       _pid: req.params.pid,
@@ -77,29 +120,34 @@ exports.createTransactions = (req, res, next) => {
 };
 
 exports.createTransaction = (req, res, next) => {
-  Transaction.create(req.body)
-    .then((transaction) => {
-      Profile.update(
+    const transaction = new Transaction({
+      _pid: req.params.pid,
+      _id: new mongoose.Types.ObjectId(),
+  });
+    const keys = Object.keys(req.body);
+    const values = Object.values(req.body);
+    for (let i = 0; i < keys.length; i += 1) {
+      transaction[keys[i]] = values[i];
+    }
+
+    Transaction.collection.insertOne(transaction);
+
+    Profile.update(
         { _id: req.params.pid },
-        { $addToSet: { transactions: transaction } }
-      )
-        .exec()
-    })
+        { $addToSet: { transactions: transaction}}
+    )
+    .exec()
     .then(result => {
-      res.setHeader('Content-Type', 'application/json');
-      res.status(201).json(result);
-      if (req.params.isBill == true) {
-        next();
-      }
+        res.status(201).json(result);
     })
     .catch(err => {
-      res.status(404).json({ error: err })
+        res.status(404).json({error: err})
     })
 };
 
 
 exports.addTransactionToBill = (req, res, next) => {
-  if (req.params.isBill == true) {
+  if (req.params.isBill === true) {
     Transaction.findById(req.params.id)
       .exec()
       .then((transaction) => {
@@ -120,7 +168,7 @@ exports.addTransactionToBill = (req, res, next) => {
 };
 
 exports.deleteTransactionFromBill = (req, res, next) => {
-  if (req.params.isBill == false) {
+  if (req.params.isBill === false) {
     Transaction.findById(req.params.id)
       .exec()
       .then((transaction) => {
@@ -179,7 +227,7 @@ exports.updateTransactionById = (req, res, next) => {
   Transaction.findById(req.params.id)
     .exec()
     .then((transaction) => {
-      if(transaction.isBill == false && req.params.isBill == true) {
+      if(transaction.isBill === false && req.params.isBill === true) {
         flag = true;
       }
       Transaction.update(

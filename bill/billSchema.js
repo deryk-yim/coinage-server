@@ -25,7 +25,7 @@ const billSchema = new Schema({
   }],
   isIncome: {
     type: Boolean,
-    requierd: true
+    required: true
   },
   recurringDate: {
     type: Date,

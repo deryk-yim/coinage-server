@@ -9,7 +9,6 @@ const { Schema } = mongoose;
 const transactionSchema = new Schema({
   _id: mongoose.Schema.ObjectId,
   _pid: mongoose.Schema.ObjectId,
-  _bid: mongoose.Schema.ObjectId,  
   transactionDate: {
     type: Date,
     required: true
@@ -26,6 +25,10 @@ const transactionSchema = new Schema({
   category: {
       type: mongoose.Schema.ObjectId,
       ref: 'Category'
+  },
+  bill: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Bill'
   },
   coordinates: {
     type: [Number],

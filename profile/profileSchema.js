@@ -6,7 +6,7 @@ const validator = require('validator');
 mongoose.Promise = global.Promise;
 
 const profileSchema = new mongoose.Schema({
-    id: mongoose.Schema.ObjectId,
+    _id: mongoose.Schema.ObjectId,
     createdDate: Date,
     modifiedDate: Date,
     lastLoggedIn: Date,
@@ -35,9 +35,7 @@ const profileSchema = new mongoose.Schema({
     transactions : [{
         type: mongoose.Schema.ObjectId,
         ref: 'Transaction'
-    }],
-    inLeaderboard: Boolean
-    
+    }]
 });
 
 profileSchema.plugin(passportLocalMongoose, {usernameField: 'email'});

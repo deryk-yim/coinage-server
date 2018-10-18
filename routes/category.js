@@ -1,0 +1,116 @@
+const express = require('express');
+const controller = require('../category/categoryController');
+
+const router = express.Router();
+/**
+ * @swagger
+ * definitions:
+ *  Category:
+ *   type: object
+ *   properties:
+ *    _id:
+ *     type: string
+ *    _pid:
+ *     type: string
+ *    createdDate:
+ *     type: string
+ *     format: date
+ *    modifiedDate:
+ *     type: string
+ *     format: date
+ *    name:
+ *     type: string
+ *    isIncome:
+ *     type: boolean
+ *    default:
+ *     type: boolean
+ *    isVisible:
+ *     type: boolean
+ */
+
+ /**
+  * @swagger
+  * /api/category/{personId}:
+  *   get:
+  *     tags:
+  *       - Category
+  *     description: Get Categories
+  *     produces:
+  *       - application/json
+  *     responses:
+  *       200:
+  *         description: Successful Operation
+  *       400:
+  *          description: Bad Request
+  */
+router.get('/:pid', controller.getCategories);
+
+/**
+ * @swagger
+ * /api/category/1/{personId}:
+ *   post:
+ *     tags:
+ *       - Category
+ *     description: Post Category (NEED REWORK)
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful Operation
+ *       400:
+ *          description: Bad Request
+ */
+router.post('/1/:pid', controller.createCategory);
+
+/**
+ * @swagger
+ * /api/category/{personId}:
+ *   post:
+ *     tags:
+ *       - Category
+ *     description: Post Categories (NEED REWORK)
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful Operation
+ *       400:
+ *          description: Bad Request
+ */
+router.post('/2/:pid', controller.createCategories);
+
+/**
+ * @swagger
+ * /api/category/update/{categoryId}:
+ *   post:
+ *     tags:
+ *       - Category
+ *     description: update Categories
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful Operation
+ *       400:
+ *          description: Bad Request
+ */
+router.post('/update/:id', controller.updateCategory);
+
+/**
+ * @swagger
+ * /api/category/{categoryId}:
+ *   delete:
+ *     tags:
+ *       - Category
+ *     description: Delete Category
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful Operation
+ *       400:
+ *          description: Bad Request
+ */
+router.delete('/:id', controller.checkDefault, controller.deleteCategory, controller.deleteProfileCategory);
+
+module.exports = router;

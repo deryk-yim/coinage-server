@@ -95,7 +95,7 @@ exports.reset = async (req, res) => {
     if(!profile){
         return res.status(400).json({
         'error': {
-            'name': 'UserDoesntExist',
+            'name': 'UserDoesNotExist',
             'message': 'The User does not exist.'
         }});
     }
@@ -124,7 +124,7 @@ exports.update = async (req, res) => {
     if (!profile) {
         return res.status(400).json({
         'error': {
-            'name': 'UserDoesntExist',
+            'name': 'UserDoesNotExist',
             'message': 'The User does not exist.'
         }});
     }

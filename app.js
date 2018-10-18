@@ -12,6 +12,7 @@ const { promisify } = require('es6-promisify');
 const expressValidator = require('express-validator');
 const errorHandlers = require('./middleware/errorHandlers');
 const helpers = require('./helpers/index');
+const swaggerJSDoc = require('swagger-jsdoc');
 
 require('dotenv').config({path: 'variables.env'});
 
@@ -34,21 +35,36 @@ require('./middleware/passport');
 // IMPORT ROUTES
 const importRecord = require('./import/index');
 const exportRecord = require('./export/index');
-const budget = require('./budget/index');
-const profile = require('./profile/index');
-const category = require('./category/index');
-const bill = require('./bill/index');
-const transaction = require('./transaction/index');
+const budget = require('./routes/budget');
+const profile = require('./routes/profile');
+const category = require('./routes/category');
+const bill = require('./routes/bill');
+const transaction = require('./routes/transaction');
 
 
 const app = express();
 
-// view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'jade');
+// SETTING UP SWAGGERJS
+const swaggerDefinition = {
+  info: {
+    title: 'Koinij API',
+    version: '1.0.0'
+  },
+  host: 'localhost:3000',
+  basePath: '/'
+};
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+const options = {
+  swaggerDefinition,
+  apis:['./routes/*.js']
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+app.get('/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+})
+
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -56,7 +72,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressValidator());
-
 app.use(session({
   secret: process.env.SECRET,
   key: process.env.KEY,
@@ -88,14 +103,14 @@ app.use((req, res, next) => {
   next(); 
 });
 
-app.use('/category', category);
-app.use('/budget', budget);
-app.use('/bill', bill);
-app.use('/transaction', transaction);
-app.use('/import', importRecord);
-app.use('/export', exportRecord);
-app.use('/profile', profile);
-//app.use('/', index);
+app.use('/api/category', category);
+app.use('/api/budget', budget);
+app.use('/api/bill', bill);
+app.use('/api/transaction', transaction);
+app.use('/api/import', importRecord);
+app.use('/api/export', exportRecord);
+app.use('/api/profile', profile);
+
 app.use(errorHandlers.notFound);
 
 // catch 404 and forward to error handler
@@ -117,5 +132,6 @@ res.status(err.status || 500).json({
         error: err
     });
 });
+
 
 module.exports = app;

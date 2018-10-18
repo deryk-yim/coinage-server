@@ -5,7 +5,7 @@ const validator = require('validator');
 const { Schema } = mongoose;
 
 const budgetSchema = new Schema({
-    id: mongoose.Schema.ObjectId,
+    _id: mongoose.Schema.ObjectId,
     description: String,
     category: {
         type: mongoose.Schema.ObjectId,

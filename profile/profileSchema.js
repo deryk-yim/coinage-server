@@ -6,7 +6,7 @@ const validator = require('validator');
 mongoose.Promise = global.Promise;
 
 const profileSchema = new mongoose.Schema({
-    _id: mongoose.Schema.ObjectId,
+    id: mongoose.Schema.ObjectId,
     createdDate: Date,
     modifiedDate: Date,
     lastLoggedIn: Date,

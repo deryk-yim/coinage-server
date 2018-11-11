@@ -7,8 +7,9 @@ const Bill = mongoose.model('Bill');
 exports.getTransactions = (req, res, next) => {
   const perPage = 10;
   const page = req.params.page || 1;
+  const userId = req.user.id;
   Transaction.find({
-    _pid: req.params.pid
+    _pid: userId
   }).populate('category').sort({transactionDate: -1}).skip((perPage * page) - perPage).limit(perPage)
     .exec()
     .then((transactions) => {
@@ -23,8 +24,9 @@ exports.getTransactions = (req, res, next) => {
 };
 
 exports.getCountTransactions = (req, res, next) => {
+  const userId = req.user.id;
   Transaction.find({
-    _pid: req.params.pid
+    _pid: userId
   }).count()
   .exec()
   .then((results) => {
@@ -42,8 +44,9 @@ exports.getCountTransactions = (req, res, next) => {
 };
 
 exports.getTransactionsByDate = (req, res, next) => {
+  const userId = req.user.id;
   Transaction.find({
-    _pid: req.params.pid,
+    _pid: userId,
     $date: {
       $gte: req.paras.fromDate,
       $lt: req.paras.todayDate
@@ -94,8 +97,9 @@ exports.getTransactionsByBillId = (req, res, next) => {
 
 exports.createTransactions = (req, res) => {
   const newTransactions = req.body.map((newData, index) => {
+    const userId = req.user.id;
     const transaction = new Transaction({
-      _pid: req.params.pid,
+      _pid: userId,
       _id: new mongoose.Types.ObjectId(),
     })
     const keys = Object.keys(req.body[index]);
@@ -120,29 +124,30 @@ exports.createTransactions = (req, res) => {
 };
 
 exports.createTransaction = (req, res, next) => {
-    const transaction = new Transaction({
-      _pid: req.params.pid,
-      _id: new mongoose.Types.ObjectId(),
+  const userId = req.user.id;
+  const transaction = new Transaction({
+    _pid: userId,
+    _id: new mongoose.Types.ObjectId(),
   });
-    const keys = Object.keys(req.body);
-    const values = Object.values(req.body);
-    for (let i = 0; i < keys.length; i += 1) {
-      transaction[keys[i]] = values[i];
-    }
+  const keys = Object.keys(req.body);
+  const values = Object.values(req.body);
+  for (let i = 0; i < keys.length; i += 1) {
+    transaction[keys[i]] = values[i];
+  }
 
-    Transaction.collection.insertOne(transaction);
+  Transaction.collection.insertOne(transaction);
 
-    Profile.update(
-        { _id: req.params.pid },
-        { $addToSet: { transactions: transaction}}
-    )
-    .exec()
-    .then(result => {
-        res.status(201).json(result);
-    })
-    .catch(err => {
-        res.status(404).json({error: err})
-    })
+  Profile.update(
+    { _id: req.params.pid },
+    { $addToSet: { transactions: transaction}}
+  )
+  .exec()
+  .then(result => {
+    res.status(201).json(result);
+  })
+  .catch(err => {
+    res.status(404).json({error: err})
+  })
 };
 
 

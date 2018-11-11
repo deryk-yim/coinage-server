@@ -51,7 +51,7 @@ router.get('/:pid', controller.getCategories);
  *   post:
  *     tags:
  *       - Category
- *     description: Post Category (NEED REWORK)
+ *     description: Post Category (NOT IN USE)
  *     produces:
  *       - application/json
  *     responses:
@@ -60,7 +60,7 @@ router.get('/:pid', controller.getCategories);
  *       400:
  *          description: Bad Request
  */
-router.post('/1/:pid', controller.createCategory);
+//router.post('/1/:pid', controller.createCategory);
 
 /**
  * @swagger
@@ -68,7 +68,7 @@ router.post('/1/:pid', controller.createCategory);
  *   post:
  *     tags:
  *       - Category
- *     description: Post Categories (NEED REWORK)
+ *     description: Post Categories (NOT IN USE)
  *     produces:
  *       - application/json
  *     responses:
@@ -77,7 +77,7 @@ router.post('/1/:pid', controller.createCategory);
  *       400:
  *          description: Bad Request
  */
-router.post('/2/:pid', controller.createCategories);
+//router.post('/2/:pid', controller.createCategories);
 
 /**
  * @swagger
@@ -85,7 +85,7 @@ router.post('/2/:pid', controller.createCategories);
  *   post:
  *     tags:
  *       - Category
- *     description: update Categories
+ *     description: update Categories (NOT IN USE)
  *     produces:
  *       - application/json
  *     responses:
@@ -94,7 +94,7 @@ router.post('/2/:pid', controller.createCategories);
  *       400:
  *          description: Bad Request
  */
-router.post('/update/:id', controller.updateCategory);
+//router.post('/update/:id', controller.updateCategory);
 
 /**
  * @swagger
@@ -102,7 +102,7 @@ router.post('/update/:id', controller.updateCategory);
  *   delete:
  *     tags:
  *       - Category
- *     description: Delete Category
+ *     description: Delete Category (NOT IN USE)
  *     produces:
  *       - application/json
  *     responses:
@@ -111,6 +111,6 @@ router.post('/update/:id', controller.updateCategory);
  *       400:
  *          description: Bad Request
  */
-router.delete('/:id', controller.checkDefault, controller.deleteCategory, controller.deleteProfileCategory);
+//router.delete('/:id', controller.checkDefault, controller.deleteCategory, controller.deleteProfileCategory);
 
 module.exports = router;

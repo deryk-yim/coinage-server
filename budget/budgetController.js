@@ -20,7 +20,6 @@ exports.createBudget = async (req, res) => {
 
 exports.createBudgets = async (req, res) => {
     try {
-
         const addBudgets = req.body.map((data) => {
             return new Budget({data});
         });

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon ./bin/www",
     "start": "node ./bin/www",
+    "debug": "nodemon --inspect ./bin/www",
     "test": "mocha -u bdd -R spec -t 500 --recursive --exit"
   },
   "dependencies": {

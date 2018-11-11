@@ -88,6 +88,20 @@ router.post('/login', controller.login);
  *     tags:
  *       - Profile
  *     description: Register account
+ *     parameters:
+ *      - in: body
+ *        name: body
+ *        description: account details
+ *        required: true
+ *        schema:
+ *         type: object
+ *         properties:
+ *          email:
+ *           type: string
+ *          password:
+ *           type: string
+ *          password-confirm:
+ *           type: string
  *     produces:
  *       - application/json
  *     responses:

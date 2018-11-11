@@ -40,7 +40,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/bill/{personId}:
+ * /api/bill/:
  *   get:
  *     tags:
  *       - Bill
@@ -53,11 +53,11 @@ const router = express.Router();
  *       400:
  *          description: Bad Request
  */
-router.get('/:pid', controller.getBills);
+router.get('/', controller.getBills);
 
 /**
  * @swagger
- * /api/bill/{personId}/{billId}:
+ * /api/bill/{billId}:
  *   get:
  *     tags:
  *       - Bill
@@ -70,7 +70,7 @@ router.get('/:pid', controller.getBills);
  *       400:
  *          description: Bad Request
  */
-router.get('/:pid/:id', controller.getBillById);
+router.get('/:id', controller.getBillById);
 
 /**
  * @swagger
@@ -121,6 +121,6 @@ router.delete('/delete/:pid/:id', controller.deleteProfileBill, controller.delet
  *       400:
  *          description: Bad Request
  */
-router.put('/update/:pid/:id', controller.updateBillById);
+router.put('/update/:id', controller.updateBillById);
 
 module.exports = router;

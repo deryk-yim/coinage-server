@@ -39,7 +39,7 @@ const router = express.Router();
 
 router.get('/:page', controller.getTransactions);
 router.post('/count/1/', controller.getCountTransactions);
-router.post('/:pid/', controller.getTransactionById);
+router.post('/', controller.getTransactionById);
 router.post('/bill/:bid', controller.getTransactionsByBillId);
 router.post('/create/1/', controller.createTransaction, controller.addTransactionToBill);
 router.post('/create/2/', controller.createTransactions);

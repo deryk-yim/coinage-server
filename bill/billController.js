@@ -3,8 +3,9 @@ const Bill = mongoose.model('Bill');
 const Profile = mongoose.model('Profile');
 
 exports.getBills = (req, res, next) => {
+  const userId = req.user.id;
   Bill.find({
-    _pid: req.params.pid
+    _pid: userId
   })
     .exec()
     .then((bills) => {
@@ -19,10 +20,11 @@ exports.getBills = (req, res, next) => {
 };
 
 exports.createBill = (req, res, next) => {
+  const userId = req.user.id;
   Bill.create(req.body)
     .then((bill) => {
       Profile.update(
-        { _id: req.params.pid },
+        { _id: userId },
         { $addToSet: { bills: bill } }
       )
         .exec()
@@ -37,9 +39,10 @@ exports.createBill = (req, res, next) => {
 };
 
 exports.createBills = (req, res, next) => {
+  const userId = req.user.id;
   const newBills = req.body.map((newData, index) => {
     const bill = new Bill({
-      _pid: req.params.pid,
+      _pid: userId,
       _id: new mongoose.Types.ObjectId(),
     })
     const keys = Object.keys(req.body[index]);
@@ -51,7 +54,7 @@ exports.createBills = (req, res, next) => {
   })
   Bill.collection.insertMany(newBills)
   Profile.update(
-    { _id: req.params.pid },
+    { _id: userId },
     { $addToSet: { bills: newBills } }
   )
     .exec()
@@ -138,8 +141,9 @@ exports.updateBillById = (req, res, next) => {
 };
 
 exports.deleteAllProfileBills = (req, res, next) => {
+  const userId = req.user.id;
   Profile.update(
-    { _id: req.params.id },
+    { _id: userId },
     { $set: { bills: [] }}
   )
   .exec()

@@ -5,7 +5,8 @@ const Category = mongoose.model('Category');
 
 exports.getCategories = (req, res, next) => {
     // find all categories for a profile
-    Category.find({_pid: req.params.pid})
+    const userId = req.user.id;
+    Category.find({_pid: userId})
     .exec()
     .then(categories => {
         res.setHeader('Content-Type', 'application/json');
@@ -19,8 +20,9 @@ exports.getCategories = (req, res, next) => {
 
 
 exports.createCategory = (req, res, next) => {    
+    const userId = req.user.id;
     const category = new Category({
-        _pid: req.params.pid,
+        _pid: userId,
         _id: new mongoose.Types.ObjectId(),
     });
 
@@ -33,7 +35,7 @@ exports.createCategory = (req, res, next) => {
     Category.collection.insertOne(category);
     
     Profile.update(
-        { _id: req.params.pid },
+        { _id: userId },
         { $addToSet: { categories: category}}
     )
     .exec()
@@ -47,9 +49,10 @@ exports.createCategory = (req, res, next) => {
 }
 
 exports.createCategories = (req, res, next) => {
+    const userId = req.user.id;
     const newCategories = req.body.map((newData, index) => {
         const category = new Category({
-            _pid: req.params.pid,
+            _pid: userId,
             _id: new mongoose.Types.ObjectId(),
         })
 
@@ -63,7 +66,7 @@ exports.createCategories = (req, res, next) => {
 
     Category.collection.insertMany(newCategories)
     Profile.update(
-        { _id: req.params.pid },
+        { _id: userId },
         { $addToSet: { categories: newCategories}}
     )
     .exec()

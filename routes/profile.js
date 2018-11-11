@@ -66,8 +66,6 @@ const router = express.Router();
  *          type: string
  *         password:
  *          type: string
- *         password-confirm:
- *          type: string
  *     produces:
  *       - application/json
  *     responses:

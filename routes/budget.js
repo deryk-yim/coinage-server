@@ -53,7 +53,7 @@ router.post('/', controller.createBudgets);
 
 /**
  * @swagger
- * /api/budget/update/{budgetId}:
+ * /api/budget/{budgetId}:
  *   post:
  *     tags:
  *       - Budget
@@ -66,7 +66,7 @@ router.post('/', controller.createBudgets);
  *       400:
  *          description: Bad Request
  */
-router.post('/update/:id', controller.updateBudget);
+router.post('/:id', controller.updateBudget);
 
 /**
  * @swagger

@@ -20,12 +20,13 @@ exports.createBudget = async (req, res) => {
 
 exports.createBudgets = async (req, res) => {
     try {
+        const userId = req.user.id;
         const addBudgets = req.body.map((data) => {
             return new Budget({data});
         });
     
         Budget.collection.insertMany(addBudgets);
-        const user = await Profile.update({_id: req.params.id}, {
+        const user = await Profile.update({_id: userId}, {
             $addToSet: {budgets: addBudgets}
         });
         return res.status(201).json(user);

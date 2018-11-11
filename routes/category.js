@@ -30,7 +30,7 @@ const router = express.Router();
 
  /**
   * @swagger
-  * /api/category/{personId}:
+  * /api/category/:
   *   get:
   *     tags:
   *       - Category
@@ -43,11 +43,11 @@ const router = express.Router();
   *       400:
   *          description: Bad Request
   */
-router.get('/:pid', controller.getCategories);
+router.get('/', controller.getCategories);
 
 /**
  * @swagger
- * /api/category/1/{personId}:
+ * /api/category/1/:
  *   post:
  *     tags:
  *       - Category
@@ -60,11 +60,11 @@ router.get('/:pid', controller.getCategories);
  *       400:
  *          description: Bad Request
  */
-//router.post('/1/:pid', controller.createCategory);
+//router.post('/1/', controller.createCategory);
 
 /**
  * @swagger
- * /api/category/{personId}:
+ * /api/category/:
  *   post:
  *     tags:
  *       - Category
@@ -77,7 +77,7 @@ router.get('/:pid', controller.getCategories);
  *       400:
  *          description: Bad Request
  */
-//router.post('/2/:pid', controller.createCategories);
+//router.post('/2/', controller.createCategories);
 
 /**
  * @swagger

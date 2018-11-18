@@ -36,14 +36,14 @@ const router = express.Router();
  *     $ref: "#/definitions/Bill"
  */
 
-
-router.get('/:page', controller.getTransactions);
-router.post('/count/1/', controller.getCountTransactions);
-router.post('/', controller.getTransactionById);
-router.post('/bill/:bid', controller.getTransactionsByBillId);
-router.post('/create/1/', controller.createTransaction, controller.addTransactionToBill);
+router.get('/page/:page', controller.getTransactionsPerPage);
+router.get('/count/', controller.getTransactionsCounts);
+router.get('/record/', controller.getTransactionById);
+router.get('/bill/:bid', controller.getTransactionsByBillId);
+router.post('/create/1/', controller.createTransaction);
 router.post('/create/2/', controller.createTransactions);
-router.delete('/delete/:id', controller.deleteProfileTransaction, controller.deleteTransactionById);
-router.put('/update/:id', controller.updateTransactionById, controller.addTransactionToBill, controller.deleteTransactionFromBill);
+router.delete('/delete/1/', controller.deleteTransactionById);
+router.delete('/delete/2', controller.deleteTransactions);
+router.put('/update/:id', controller.updateTransactionById);
 
 module.exports = router;

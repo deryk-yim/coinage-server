@@ -6,7 +6,6 @@
     "dev": "nodemon ./bin/www",
     "debug": "nodemon --inspect ./bin/www",
     "start": "node ./bin/www",
-    "debug": "nodemon --inspect ./bin/www",
     "test": "mocha -u bdd -R spec -t 500 --recursive --exit"
   },
   "dependencies": {
@@ -16,7 +15,7 @@
     "debug": "~2.6.9",
     "dotenv": "^5.0.1",
     "es6-promisify": "^6.0.0",
-    "express": "^4.15.5",
+    "express": "^4.16.4",
     "express-session": "^1.15.6",
     "express-validator": "^5.0.3",
     "express-validators": "^1.0.4",
@@ -26,11 +25,11 @@
     "mongoose": "^5.0.11",
     "mongoose-currency": "^0.2.0",
     "mongoose-mongodb-errors": "0.0.2",
-    "morgan": "~1.9.0",
+    "morgan": "^1.9.1",
     "nodemon": "^1.17.2",
     "passport": "^0.4.0",
     "passport-local-mongoose": "^5.0.0",
-    "serve-favicon": "^2.4.5",
+    "serve-favicon": "^2.5.0",
     "swagger-jsdoc": "^3.2.3",
     "validator": "^9.4.1"
   },

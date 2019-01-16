@@ -1,16 +1,30 @@
 const mongoose = require('mongoose');
+
 const Transaction = mongoose.model('Transaction');
 const Profile = mongoose.model('Profile');
-const Bill = mongoose.model('Bill');
+const moment = require('moment');
 
+const createQuery = (req) => {
+  const query = {
+    _pid: req.user.id,
+  }
+  if (req.body.categories) {
+    query.category = req.body.categories;
+  }
+  if (req.body.dateFrom && req.body.dateTo) {
+  query.transactionDate = {
+      $gte: moment(req.body.dateFrom).toDate(),
+      $lte: moment(req.body.dateTo).toDate()
+    }
+  }
+  return query;
+};
 
-exports.getTransactions = (req, res, next) => {
-  const perPage = 10;
+exports.getTransactionsPerPage = (req, res) => {
+  const perPage = 20;
   const page = req.params.page || 1;
-  const userId = req.user.id;
-  Transaction.find({
-    _pid: userId
-  }).populate('category').sort({transactionDate: -1}).skip((perPage * page) - perPage).limit(perPage)
+  Transaction.find(createQuery(req)
+  ).populate('category').sort({ transactionDate: -1 }).skip((perPage * page) - perPage).limit(perPage)
     .exec()
     .then((transactions) => {
       res.setHeader('Content-Type', 'application/json');
@@ -43,19 +57,23 @@ exports.getCountTransactions = (req, res, next) => {
     }));
 };
 
-exports.getTransactionsByDate = (req, res, next) => {
-  const userId = req.user.id;
-  Transaction.find({
-    _pid: userId,
-    $date: {
-      $gte: req.paras.fromDate,
-      $lt: req.paras.todayDate
+exports.getTransactionsSum = (req, res) => {
+  Transaction.find(createQuery(req)).aggregate(
+    [{
+      $group: { 
+        _id: req.params.id, 
+        total: { 
+            $sum: "$amount" 
+        } 
+    } 
     }
-  }).populate('category').sort({transactionDate: -1})
+  ])
     .exec()
-    .then((transactions) => {
+    .then((results) => {
       res.setHeader('Content-Type', 'application/json');
-      res.json(transactions);
+      res.json({
+        data: results
+      })
     })
     .catch((err => {
       res.status(404).json({
@@ -63,7 +81,6 @@ exports.getTransactionsByDate = (req, res, next) => {
       });
     }));
 };
-
 
 exports.getTransactionById = (req, res, next) => {
   Transaction.findById(req.params.id)
@@ -98,9 +115,8 @@ exports.getTransactionsByBillId = (req, res, next) => {
 
 exports.createTransactions = (req, res) => {
   const newTransactions = req.body.map((newData, index) => {
-    const userId = req.user.id;
     const transaction = new Transaction({
-      _pid: userId,
+      _pid: req.params.pid,
       _id: new mongoose.Types.ObjectId(),
     });
     const keys = Object.keys(req.body[index]);
@@ -125,9 +141,8 @@ exports.createTransactions = (req, res) => {
 };
 
 exports.createTransaction = (req, res, next) => {
-  const userId = req.user.id;
   const transaction = new Transaction({
-    _pid: userId,
+    _pid: req.params.pid,
     _id: new mongoose.Types.ObjectId(),
   });
   const keys = Object.keys(req.body);
@@ -135,9 +150,7 @@ exports.createTransaction = (req, res, next) => {
   for (let i = 0; i < keys.length; i += 1) {
     transaction[keys[i]] = values[i];
   }
-
   Transaction.collection.insertOne(transaction);
-
   Profile.update(
     { _id: req.params.pid },
     { $addToSet: { transactions: transaction}}
@@ -217,20 +230,23 @@ exports.deleteProfileTransaction = (req, res, next) => {
     .then(result => {
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({ result })
-      next();
     })
     .catch(err => {
       res.status(404).json({ Error: err });
     });
 };
 
-exports.updateTransactionById = (req, res, next) => {
-  let flag = false;
-  Transaction.findById(req.params.id)
+exports.updateTransactionById = (req, res) => {
+  Transaction.findOneAndUpdate({
+    _id: req.params.id,
+    _pid: req.user.id,
+  }, {
+    $set: req.body
+  })
     .exec()
     .then((transaction) => {
       if(transaction.isBill === false && req.params.isBill === true) {
-        flag = true;
+        let flag = true;
       }
       Transaction.update(
         { _id: req.params.id },
@@ -238,12 +254,9 @@ exports.updateTransactionById = (req, res, next) => {
       );
     })
     .then((result, transaction) => {
-      res.status(200).json(result)
-      if (flag) {
-        next();
-      }
+      res.status(200).json(result);
     })
     .catch(err => {
-      res.status(404).json({ error: err })
+      res.status(404).json({ error: err });
     });
 };

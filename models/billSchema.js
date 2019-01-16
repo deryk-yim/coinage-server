@@ -1,31 +1,28 @@
 let mongoose = require('mongoose');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const validator = require('validator');
+const Currency = require('mongoose-currency');
 
 const { Schema } = mongoose;
 
 const billSchema = new Schema({
-  _id: mongoose.Schema.ObjectId,
-  _pid: mongoose.Schema.ObjectId,
   description: {
     type: String,
     required: true
   },
-  isBiweekly: {
-    type: Boolean,
+  defaultAmount: {
+    type: Currency,
+    min: 0,
+    required: false
+  },
+  frequency: {
+    type: String,
+    enum: ['Monthly', 'Semi-Monthly', 'Bi-Weekly', 'Weekly'],
     required: true
   },
   category: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Category'
-  },
-  transactions: [{
-      type: mongoose.Schema.ObjectId,
-      ref: 'Transaction'
-  }],
-  isIncome: {
-    type: Boolean,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
   },
   recurringDate: {
     type: Date,

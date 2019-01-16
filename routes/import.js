@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('./import');
+const controller = require('../controllers/importController');
 const {catchErrors} = require('../middleware/errorHandlers');
 
 const router = express.Router();

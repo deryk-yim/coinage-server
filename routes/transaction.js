@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../transaction/transactionController');
+const controller = require('../controllers/transactionController');
 const {catchErrors} = require('../middleware/errorHandlers');
 
 const router = express.Router();
@@ -28,12 +28,22 @@ const router = express.Router();
  *    amount:
  *     type: integer
  *     format: int64
+ *    location:
+ *      type: object
  *    category:
  *     type: object
  *     $ref: "#/definitions/Category"
  *    bill:
  *     type: object
  *     $ref: "#/definitions/Bill"
+ *    isBill:
+ *      type: boolean
+ *    isImport:
+ *      type: boolean
+ *    isIncome:
+ *      type: boolean
+ *    isLifeExpense:
+ *      type: boolean
  */
 
 

@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../bill/billController');
+const controller = require('../controllers/billController');
 const {catchErrors} = require('../middleware/errorHandlers');
 
 const router = express.Router();
@@ -22,16 +22,16 @@ const router = express.Router();
  *         format: date
  *       description:
  *          type: string
- *       isBiweekly:
- *          type: boolean
+ *       defaultAmount:
+ *          type: number
+ *       frequency:
+ *          type: string
  *       category:
  *          type: object
  *          $ref: "#/definitions/Category"
  *       transactions:
  *          type: array
  *          $ref: "#/definitions/Transaction"
- *       isIncome:
- *          type: boolean
  *       recurringDate:
  *          type: string
  *          format: date
@@ -40,11 +40,11 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/bill/{personId}:
+ * /api/bill/:
  *   get:
  *     tags:
  *       - Bill
- *     description: Get Bill
+ *     description: Get Bills by Profile Id
  *     produces:
  *       - application/json
  *     responses:
@@ -53,15 +53,24 @@ const router = express.Router();
  *       400:
  *          description: Bad Request
  */
-router.get('/:pid', controller.getBills);
+router.get('/', controller.getBills);
 
 /**
  * @swagger
- * /api/bill/{personId}/{billId}:
+ * /api/bill/{billId}:
  *   get:
  *     tags:
  *       - Bill
  *     description: Get Bill by ID
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: Bill Id
+ *         required: true
+ *         schema:
+ *          type: string
+ *          properties:
+ *            billId: string
  *     produces:
  *       - application/json
  *     responses:
@@ -70,7 +79,7 @@ router.get('/:pid', controller.getBills);
  *       400:
  *          description: Bad Request
  */
-router.get('/:pid/:id', controller.getBillById);
+router.get('/:id', controller.getBillById);
 
 /**
  * @swagger
@@ -78,7 +87,7 @@ router.get('/:pid/:id', controller.getBillById);
  *   post:
  *     tags:
  *       - Bill
- *     description: Post Bill
+ *     description: Will create bill if it does not exist, else update
  *     produces:
  *       - application/json
  *     responses:
@@ -87,11 +96,28 @@ router.get('/:pid/:id', controller.getBillById);
  *       400:
  *          description: Bad Request
  */
-router.post('/', controller.createBill);
+router.post('/', controller.createAndUpdateBill);
 
 /**
  * @swagger
- * /api/bill/delete/{personId}/{billId}:
+ * /api/bill/{id}/transactions:
+ *   post:
+ *     tags:
+ *       - Bill
+ *     description: Generate Transactions for a Bill
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful Operation
+ *       400:
+ *          description: Bad Request
+ */
+router.post('/:id/transactions', controller.generateBillTransactions);
+
+/**
+ * @swagger
+ * /api/bill/delete/{billId}:
  *   delete:
  *     tags:
  *       - Bill
@@ -104,11 +130,11 @@ router.post('/', controller.createBill);
  *       400:
  *          description: Bad Request
  */
-router.delete('/delete/:pid/:id', controller.deleteProfileBill, controller.deleteBillById);
+router.delete('/delete/:id', controller.deleteProfileBill, controller.deleteBillById);
 
 /**
  * @swagger
- * /api/bill/update/{personId}/{billId}:
+ * /api/bill/update/{billId}:
  *   put:
  *     tags:
  *       - Bill
@@ -121,6 +147,6 @@ router.delete('/delete/:pid/:id', controller.deleteProfileBill, controller.delet
  *       400:
  *          description: Bad Request
  */
-router.put('/update/:pid/:id', controller.updateBillById);
+router.put('/update/:id', controller.updateBillById);
 
 module.exports = router;

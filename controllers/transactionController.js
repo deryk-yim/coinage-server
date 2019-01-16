@@ -19,8 +19,8 @@ exports.getTransactions = (req, res, next) => {
     .catch((err => {
       res.status(404).json({
         error: err
-      })
-    }))
+      });
+    }));
 };
 
 exports.getCountTransactions = (req, res, next) => {
@@ -28,19 +28,19 @@ exports.getCountTransactions = (req, res, next) => {
   Transaction.find({
     _pid: userId
   }).count()
-  .exec()
-  .then((results) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.json({
-      data: results
+    .exec()
+    .then((results) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.json({
+        data: results
+      });
     })
-  })
-  .catch((err => {
-    console.log(err);
-    res.status(404).json({
-      error: err
-    })
-  }))
+    .catch((err => {
+      console.log(err);
+      res.status(404).json({
+        error: err
+      });
+    }));
 };
 
 exports.getTransactionsByDate = (req, res, next) => {
@@ -60,8 +60,8 @@ exports.getTransactionsByDate = (req, res, next) => {
     .catch((err => {
       res.status(404).json({
         error: err
-      })
-    }))
+      });
+    }));
 };
 
 
@@ -75,9 +75,10 @@ exports.getTransactionById = (req, res, next) => {
     .catch((err => {
       res.status(404).json({
         error: err
-      })
-    }))
+      });
+    }));
 };
+
 exports.getTransactionsByBillId = (req, res, next) => {
   Transaction.find({
     _bid: req.params.bid
@@ -90,8 +91,8 @@ exports.getTransactionsByBillId = (req, res, next) => {
     .catch((err => {
       res.status(404).json({
         error: err
-      })
-    }))
+      });
+    }));
 
 };
 
@@ -101,14 +102,14 @@ exports.createTransactions = (req, res) => {
     const transaction = new Transaction({
       _pid: userId,
       _id: new mongoose.Types.ObjectId(),
-    })
+    });
     const keys = Object.keys(req.body[index]);
     const values = Object.values(req.body[index]);
     for (let i = 0; i < keys.length; i += 1) {
-      transaction[keys[i]] = values[i]
+      transaction[keys[i]] = values[i];
     }
     return transaction;
-  })
+  });
   Transaction.collection.insertMany(newTransactions)
   Profile.update(
     { _id: req.params.pid },
@@ -120,7 +121,7 @@ exports.createTransactions = (req, res) => {
     })
     .catch(err => {
       res.status(404).json({ error: err });
-    })
+    });
 };
 
 exports.createTransaction = (req, res, next) => {
@@ -140,14 +141,13 @@ exports.createTransaction = (req, res, next) => {
   Profile.update(
     { _id: req.params.pid },
     { $addToSet: { transactions: transaction}}
-  )
-  .exec()
-  .then(result => {
-    res.status(201).json(result);
-  })
-  .catch(err => {
-    res.status(404).json({error: err})
-  })
+  ).exec()
+    .then(result => {
+      res.status(201).json(result);
+    })
+    .catch(err => {
+      res.status(404).json({error: err});
+    });
 };
 
 
@@ -159,8 +159,7 @@ exports.addTransactionToBill = (req, res, next) => {
         Bill.update(
           { _id: req.params.bid },
           { $addToSet: { transactions: transaction } }
-        )
-          .exec()
+        ).exec();
       })
       .then(result => {
         res.setHeader('Content-Type', 'application/json');
@@ -168,7 +167,7 @@ exports.addTransactionToBill = (req, res, next) => {
       })
       .catch(err => {
         res.status(404).json({ error: err })
-      })
+      });
   }
 };
 
@@ -180,18 +179,17 @@ exports.deleteTransactionFromBill = (req, res, next) => {
         Bill.update(
           { _id: req.params.bid },
           { $pull: { transactions: transaction } }
-        )
-          .exec()
+        ).exec();
       })
       .then(result => {
         res.setHeader('Content-Type', 'application/json');
-        res.status(200).json({ result })
+        res.status(200).json({ result });
         next();
       })
       .catch(err => {
         res.status(404).json({ Error: err });
-      })
-    }
+      });
+  }
 };
 
 exports.deleteTransactionById = (req, res, next) => {
@@ -199,12 +197,12 @@ exports.deleteTransactionById = (req, res, next) => {
     .exec()
     .then(result => {
       res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({ result })
+      res.status(200).json({ result });
       next();
     })
     .catch(err => {
       res.status(404).json({ Error: err });
-    })
+    });
 };
 
 exports.deleteProfileTransaction = (req, res, next) => {
@@ -214,8 +212,7 @@ exports.deleteProfileTransaction = (req, res, next) => {
       Profile.update(
         { _id: req.params.pid },
         { $pull: { transactions: transaction } }
-      )
-        .exec()
+      ).exec();
     })
     .then(result => {
       res.setHeader('Content-Type', 'application/json');
@@ -224,7 +221,7 @@ exports.deleteProfileTransaction = (req, res, next) => {
     })
     .catch(err => {
       res.status(404).json({ Error: err });
-    })
+    });
 };
 
 exports.updateTransactionById = (req, res, next) => {
@@ -238,7 +235,7 @@ exports.updateTransactionById = (req, res, next) => {
       Transaction.update(
         { _id: req.params.id },
         { $set: req.body }
-      )
+      );
     })
     .then((result, transaction) => {
       res.status(200).json(result)
@@ -248,5 +245,5 @@ exports.updateTransactionById = (req, res, next) => {
     })
     .catch(err => {
       res.status(404).json({ error: err })
-    })
+    });
 };

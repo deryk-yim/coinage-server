@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../budget/budgetController');
+const controller = require('../controllers/budgetController');
 const {catchErrors} = require('../middleware/errorHandlers');
 
 const router = express.Router();

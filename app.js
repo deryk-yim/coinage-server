@@ -23,18 +23,18 @@ mongoose.connection.on('error', (err) => {
 });
 
 // IMPORT MODELS
-require('./category/categorySchema');
-require('./budget/budgetSchema');
-require('./bill/billSchema');
-require('./transaction/transactionSchema');
-require('./import/importSchema');
-require('./export/exportSchema');
-require('./profile/profileSchema');
+require('./models/categorySchema');
+require('./models/budgetSchema');
+require('./models/billSchema');
+require('./models/transactionSchema');
+require('./models/importSchema');
+require('./models/exportSchema');
+require('./models/profileSchema');
 require('./middleware/passport');
 
 // IMPORT ROUTES
-const importRecord = require('./import/index');
-const exportRecord = require('./export/index');
+const importRoute = require('./routes/import');
+const exportRoute = require('./routes/export');
 const budget = require('./routes/budget');
 const profile = require('./routes/profile');
 const category = require('./routes/category');
@@ -97,7 +97,7 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', "*"); 
+  res.header('Access-Control-Allow-Origin', '*'); 
   res.header('Access-Control-Allow-Methods','GET,PUT,POST,DELETE'); 
   res.header('Access-Control-Allow-Headers', 'Content-Type'); 
   next(); 
@@ -107,8 +107,8 @@ app.use('/api/category', category);
 app.use('/api/budget', budget);
 app.use('/api/bill', bill);
 app.use('/api/transaction', transaction);
-app.use('/api/import', importRecord);
-app.use('/api/export', exportRecord);
+app.use('/api/import', importRoute);
+app.use('/api/export', exportRoute);
 app.use('/api/profile', profile);
 
 app.use(errorHandlers.notFound);
@@ -127,10 +127,10 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-res.status(err.status || 500).json({
-        message: err.message,
-        error: err
-    });
+  res.status(err.status || 500).json({
+    message: err.message,
+    error: err
+  });
 });
 
 

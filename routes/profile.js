@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../profile/profileController');
+const controller = require('../controllers/profileController');
 const {catchErrors} = require('../middleware/errorHandlers');
 
 const router = express.Router();
@@ -66,8 +66,6 @@ const router = express.Router();
  *          type: string
  *         password:
  *          type: string
- *         password-confirm:
- *          type: string
  *     produces:
  *       - application/json
  *     responses:
@@ -113,8 +111,8 @@ router.post('/login', controller.login);
  *          description: Bad Request
  */
 router.post('/register', 
-    controller.validateRegister, 
-    controller.register 
+  controller.validateRegister, 
+  controller.register 
 );
 
 /**
@@ -167,8 +165,8 @@ router.get('/reset/:token', controller.reset);
  *          description: Bad Request
  */
 router.post('/reset/:token', 
-    controller.confirmedPassword, 
-    controller.update
+  controller.confirmedPassword, 
+  controller.update
 );
 
 /**

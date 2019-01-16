@@ -12,10 +12,10 @@ const createQuery = (req) => {
     query.category = req.body.categories;
   }
   if (req.body.dateFrom && req.body.dateTo) {
-  query.transactionDate = {
+    query.transactionDate = {
       $gte: moment(req.body.dateFrom).toDate(),
       $lte: moment(req.body.dateTo).toDate()
-    }
+    };
   }
   return query;
 };
@@ -63,17 +63,17 @@ exports.getTransactionsSum = (req, res) => {
       $group: { 
         _id: req.params.id, 
         total: { 
-            $sum: "$amount" 
+          $sum: '$amount'
         } 
-    } 
+      } 
     }
-  ])
+    ])
     .exec()
     .then((results) => {
       res.setHeader('Content-Type', 'application/json');
       res.json({
         data: results
-      })
+      });
     })
     .catch((err => {
       res.status(404).json({
@@ -179,7 +179,7 @@ exports.addTransactionToBill = (req, res, next) => {
         res.status(201).json(result);
       })
       .catch(err => {
-        res.status(404).json({ error: err })
+        res.status(404).json({ error: err });
       });
   }
 };

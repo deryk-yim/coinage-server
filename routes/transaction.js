@@ -47,13 +47,13 @@ const router = express.Router();
  */
 
 router.get('/page/:page', controller.getTransactionsPerPage);
-router.get('/count/', controller.getTransactionsCounts);
+router.get('/count/', controller.getCountTransactions);
 router.get('/record/', controller.getTransactionById);
 router.get('/bill/:bid', controller.getTransactionsByBillId);
 router.post('/create/1/', controller.createTransaction);
 router.post('/create/2/', controller.createTransactions);
-router.delete('/delete/1/', controller.deleteTransactionById);
-router.delete('/delete/2', controller.deleteTransactions);
+//router.delete('/delete/1/', controller.deleteTransactionById);
+//router.delete('/delete/2', controller.deleteTransactions);
 router.put('/update/:id', controller.updateTransactionById);
 
 module.exports = router;

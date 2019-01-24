@@ -1,41 +1,60 @@
 const mongoose = require('mongoose');
-const moment = require('moment');
 
 const Budget = mongoose.model('Budget');
 const Profile = mongoose.model('Profile');
 
-const { promisify } = require('es6-promisify');
-
-exports.createBudget = async (req, res) => {
-    try{
-    req.body.createdDate = moment();
-    const budget = await(new Budget(req.body)).save();  
-    req.user.budgets.push(budget);
-    const user = await(new Profile(req.user)).save();
-    return res.status(201).json(user);
-    } catch(ex) {
-        return res.status(400).send({ 'error': ex.message });
-    }
+const createQuery = (req) => {
+  const query = { 
+    pid: req.user.id,
+  };
+  if (req.body.categories) {
+    query.category = req.body.categories;
+  }
+  if (req.body.description) {
+    query.description = req.body.description;
+  }
+  return query;
 };
 
-exports.createBudgets = async (req, res) => {
-    try {
-        const userId = req.user.id;
-        const addBudgets = req.body.map((data) => {
-            return new Budget({data});
-        });
-    
-        Budget.collection.insertMany(addBudgets);
-        const user = await Profile.update({_id: userId}, {
-            $addToSet: {budgets: addBudgets}
-        });
-        return res.status(201).json(user);
+exports.getBudgets = (req, res) => {
+  Budget.find(createQuery(req))
+    .exec()
+    .then((budgets) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.json(budgets);
+    })
+    .catch((err => {
+      res.status(404).json({
+        error: err
+      });
+    }));
+};
 
-    } catch (ex) {
-        return res.status(400).send({ 'error': ex.message });
+exports.createBudgets = (req, res) => {
+  const addBudgets = req.body.map((_newData, index) => {
+    const budget = new Budget({
+      _pid: req.params.pid,
+      _id: new mongoose.Types.ObjectId(),
+    });
+    const keys = Object.keys(req.body[index]);
+    const values = Object.values(req.body[index]);
+    for (let i = 0; i < keys.length; i += 1) {
+      budget[keys[i]] = values[i];
     }
-
-
+    return budget;
+  });
+  Budget.collection.insertMany(addBudgets);
+  Profile.update(
+    { _id: req.params.pid },
+    { $addToSet: { budget: addBudgets } }
+  )
+    .exec()
+    .then(result => { 
+      res.status(201).json(result);
+    })
+    .catch(err => {
+      res.status(404).json({ error: err });
+    });
 };
 
 exports.updateBudget = async (req, res) => {
@@ -51,7 +70,8 @@ exports.updateBudget = async (req, res) => {
     return res.sendStatus(200);
 };
 
-exports.deleteBudget = async (req, res) => {
+
+exports.deleteBudget = (req, res) => {
     const i = req.user.budgets.indexOf(req.body.id);
     if (i !== -1) 
         req.user.budgets.splice(i, 1);

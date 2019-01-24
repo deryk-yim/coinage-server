@@ -4,6 +4,8 @@ const {catchErrors} = require('../middleware/errorHandlers');
 
 const router = express.Router();
 
+router.get('/', controller.getBudgets);
+
 /**
  * @swagger
  * definitions:

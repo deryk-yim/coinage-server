@@ -8,7 +8,8 @@ const budgetSchema = new Schema({
   description: String,
   category: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Category'   
+    ref: 'Category',
+    unique: true   
   },
   budgetAmount: Number,
   actualAmount: Number,

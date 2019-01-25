@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const validator = require('validator');
-//const BillSchema = require('../bill/billSchema');
-
+const BillSchema = require('./billSchema');
 const Currency = require('mongoose-currency');
 
 const { Schema } = mongoose;
 
 const transactionSchema = new Schema({
-  _id: mongoose.Schema.ObjectId,
-  _pid: mongoose.Schema.ObjectId,
   transactionDate: {
     type: Date,
     required: true
@@ -27,7 +24,7 @@ const transactionSchema = new Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Category'
   },
-  //bill: {BillSchema},
+  bill: mongoose.model('Bill').schema,
   location: {
     type: String,
     enum: ['Point'],

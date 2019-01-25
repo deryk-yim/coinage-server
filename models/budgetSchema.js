@@ -9,13 +9,35 @@ const budgetSchema = new Schema({
   category: {
     type: mongoose.Schema.ObjectId,
     ref: 'Category',
-    unique: true   
+    unique: true,
+    required: true   
   },
-  budgetAmount: Number,
-  actualAmount: Number,
+  isOverBudget: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
+  budgetAmount: {
+    type: Number,
+    default:  0,
+    required: true
+  },
+  actualAmount: {
+    type: Number,
+    default: 0,
+    required: true 
+  },
   thesholdLevel: Number,
-  createdDate: Date,
-  modifiedDate: Date
+  createdDate: {
+    type: Date,
+    default: Date.now,
+    required: true
+  },
+  modifiedDate: {
+    type: Date,
+    default: Date.now,
+    required: true
+  }
 });
 
 module.exports = mongoose.model('Budget', budgetSchema);

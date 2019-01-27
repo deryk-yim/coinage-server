@@ -1,11 +1,8 @@
 const express = require('express');
 const path = require('path');
-const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
 const passport = require('passport');
 const { promisify } = require('es6-promisify');
@@ -14,7 +11,12 @@ const errorHandlers = require('./middleware/errorHandlers');
 const helpers = require('./helpers/index');
 const swaggerJSDoc = require('swagger-jsdoc');
 
+// AUTHENTICATION AND CONFIGURATION
+const token = require('./authentication/token');
 require('dotenv').config({path: 'variables.env'});
+require('./authentication/jwt');
+require('./authentication/google');
+require('./authentication/facebook');
 
 mongoose.connect(process.env.DATABASE);
 mongoose.Promise = global.Promise;
@@ -41,6 +43,10 @@ const category = require('./routes/category');
 const bill = require('./routes/bill');
 const transaction = require('./routes/transaction');
 
+function generateUserToken(req, res) {
+  const accessToken = token.generateAccessToken(req.profile._id);
+  res.status(200).json({ token: accessToken });
+}
 
 const app = express();
 
@@ -63,8 +69,7 @@ const swaggerSpec = swaggerJSDoc(options);
 app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
-})
-
+});
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -72,22 +77,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressValidator());
-app.use(session({
-  secret: process.env.SECRET,
-  key: process.env.KEY,
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection })
-}));
 
 app.use(passport.initialize());
-app.use(passport.session());
 
 app.use((req, res, next) => {
   res.locals.h = helpers;
   res.locals.user = req.user || null;
   res.locals.currentPath = req.path;
-  res.locals.session = req.session;
   next();
 });
 
@@ -102,6 +98,29 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type'); 
   next(); 
 });
+
+app.get('/api/authentication/google/start', 
+  passport.authenticate('google', {
+    session: false, 
+    scope: ['openid', 'profile', 'email']
+  })
+);
+
+app.get('/api/authentication/google/redirect',
+  passport.authenticate('google', {session: false}), 
+  generateUserToken
+);
+
+app.get('/api/authentication/facebook/start',
+  passport.authenticate('facebook', {
+    session: false
+  })
+);
+
+app.get('/api/authentication/facebook/redirect',
+  passport.authenticate('facebook', {session: false}),
+  generateUserToken
+);
 
 app.use('/api/category', category);
 app.use('/api/budget', budget);
@@ -133,5 +152,9 @@ app.use((err, req, res, next) => {
   });
 });
 
+app.listen(3001, () => {
+  console.log('Server listening on port ' + 3001);
+  console.log('JWT for demo: ' + token.generateAccessToken(0));
+});
 
 module.exports = app;

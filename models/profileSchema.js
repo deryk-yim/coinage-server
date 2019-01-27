@@ -15,6 +15,7 @@ const profileSchema = new mongoose.Schema({
   createdDate: Date,
   modifiedDate: Date,
   lastLoggedIn: Date,
+  displayName: String,
   email: {
     type: String,
     validate: [validator.isEmail, 'Invalid Email Address'],
@@ -23,6 +24,9 @@ const profileSchema = new mongoose.Schema({
     trim: true,
     required: 'Please supply a valid email address'
   },
+  providers: [{
+    type: String
+  }],
   resetPasswordToken: String,
   resetPasswordExpires: Date,
   bills: [mongoose.model('Bill').schema],

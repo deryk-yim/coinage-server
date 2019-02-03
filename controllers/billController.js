@@ -7,12 +7,11 @@ const Category = mongoose.model('Category');
 const helper = require('../helpers/bill');
 
 exports.getBills = (req, res, next) => {
-  Bill.find({
-    _pid: req.user._id
-  })
-    .exec()
-    .then((bills) => {
-      res.json(bills);
+  Profile.find({
+    _id: req.user._id
+  }).exec()
+    .then((profile) => {
+      res.json(profile.bills);
     })
     .catch((err => {
       res.status(404).json({
@@ -23,47 +22,39 @@ exports.getBills = (req, res, next) => {
 
 exports.generateBillTransactions = (req, res, next) => {
   let bills = [];
-  Bill.find({ _pid: req.user._id }, function (err, result) { 
-    bills = result;
+  let unsaved_transactions = [];
+  Profile.find({ _id: req.user._id }, function (err, profile) { 
+    bills = profile.bills;
   });
-  const getLatestTransaction = (prev, curr, i) => (curr.transactionDate > prev.transactionDate) && i ? curr : prev;
-  
-  if (bills.length > 0) {
-    Bill.create({
-      _pid: req.user._id,
-      transactionDate: moment(),
-      description: bill.description,
-      amount: bill.defaultAmount,
-      category: billCategory._id,
-      isBill: true
-    });
-  }
 
-  transaction_bills.map((bill) => {
+  const getLatestTransaction = (prev, curr, i) => (curr.transactionDate > prev.transactionDate) && i ? curr : prev;
+
+  bills.map((bill) => {
     const latestTransaction = bill.transactions.find(getLatestTransaction);
     const initialDate = latestTransaction || bill.recurringDate;
     
     const dates = helper.getDateRange(initialDate, bill.frequency);
-    let newTransactions = [];
+
     const billCategory = Category.find({
       name: 'Bills & Utilities'
     });
 
     dates.foreach(date => {
-      newTransactions.push(new Transaction({
+      unsaved_transactions.push(new Transaction({
         _pid: req.user._id,
         transactionDate: date,
         description: bill.description,
         amount: bill.defaultAmount,
-        category: billCategory._id,
+        category: billCategory,
+        bill: bill,
         isBill: true
       }));
     });
 
-    console.log(dates);
+    console.log(unsaved_transactions);
   });
   
-  res.status(201).json(bills);
+  res.status(201);
 };
 
 exports.createAndUpdateBill = (req, res, next) => {

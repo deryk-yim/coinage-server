@@ -59,15 +59,17 @@ exports.createBudgets = async (req, res) => {
 
 exports.updateBudget = async (req, res) => {
   try {
-    const budget = await Budget.findOneAndUpdate({ _id: req.params.id }, req.body, {
-      new: true,
-      runValidators: true
-    });
-  } catch (ex) {
-    return res.status(400).send({ 'error': ex.message });
+    const budget = await Budget.findOneAndUpdate({ _id: req.params.id, _pid: req.user.id, },
+      {
+        $set: req.body
+      }).exec();
+    res.status(201).json(budget);
   }
-
-  return res.sendStatus(200);
+  catch (err) {
+    res.status(404).json({
+      error: err
+    });
+  }
 };
 
 exports.deleteBudget = async (req, res) => {

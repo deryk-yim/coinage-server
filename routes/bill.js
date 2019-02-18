@@ -96,7 +96,7 @@ router.get('/:id', controller.getBillById);
  *       400:
  *          description: Bad Request
  */
-router.post('/', controller.createAndUpdateBill);
+router.post('/', controller.createBill);
 
 /**
  * @swagger

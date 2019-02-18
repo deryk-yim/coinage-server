@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -25,12 +24,14 @@ mongoose.connection.on('error', (err) => {
 // IMPORT MODELS
 require('./models/categorySchema');
 require('./models/budgetSchema');
+require('./models/billCycleSchema');
 require('./models/billSchema');
 require('./models/transactionSchema');
 require('./models/importSchema');
 require('./models/exportSchema');
 require('./models/profileSchema');
 require('./middleware/passport');
+
 
 // IMPORT ROUTES
 const importRoute = require('./routes/import');
@@ -40,7 +41,6 @@ const profile = require('./routes/profile');
 const category = require('./routes/category');
 const bill = require('./routes/bill');
 const transaction = require('./routes/transaction');
-
 
 const app = express();
 

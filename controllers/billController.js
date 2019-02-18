@@ -4,22 +4,22 @@ const Bill = mongoose.model('Bill');
 const Profile = mongoose.model('Profile');
 const Transaction = mongoose.model('Transaction');
 const Category = mongoose.model('Category');
+const BillCycle = mongoose.model('BillCycle');
 const helper = require('../helpers/bill');
 
-exports.getBills = (req, res, next) => {
-  Profile.find({
-    _id: req.user._id
-  }).exec()
-    .then((profile) => {
-      res.json(profile.bills);
-    })
-    .catch((err => {
-      res.status(404).json({
-        error: err
-      });
-    }));
+exports.getBills = async (req, res, next) => {
+  try {
+    const profile = await Profile.find({_id: req.user._id});
+    res.json(profile.bills);
+  }
+  catch (err) {
+    res.status(404).json({
+      error: err
+    });
+  }
 };
 
+// todo and fix 
 exports.generateBillTransactions = (req, res, next) => {
   let bills = [];
   let unsaved_transactions = [];
@@ -57,62 +57,63 @@ exports.generateBillTransactions = (req, res, next) => {
   res.status(201);
 };
 
-exports.createAndUpdateBill = (req, res, next) => {
-  if (typeof req.body._id === 'undefined') {
-    Bill.create(req.body).then(bill => {
-      Profile.update({_id: req.user._id}, {$addToSet: {bills: bill}}.exec());
-    }).then( result => {
-      res.status(201).json(result);
-    }).catch( err => {
-      res.status(400).json({error: err });
+exports.updateBill = async (req, res, next) => {
+  try {
+    const billCycle = await BillCycle.update({ _billCycleId: req.body.billCycleId }, {
+      $set: {
+        cycle: req.body.cycle,
+        dueDate: req.body.dueDate
+      }
     });
+    const result = await Bill.update({ _id: req.body._id }, { 
+      $set: {
+        description: req.body.description,
+        defaultAmount: req.body.defaultAmount,
+        recurringDate: req.body.recurringDate,
+        billCycle: billCycle
+      }
+    });
+    res.status(200).json(result);
   }
-  else {
-    Bill.update({ _id: req.body._id }, { $set: req.body }).exec().then(result => {
-      res.status(200).json(result);
-    }).catch(err => {
-      res.status(400).json({ error: err });
+  catch (err) {
+    res.status(404).json({
+      error: err
     });
   }
 };
 
-exports.createBills = (req, res, next) => {
-  const newBills = req.body.map((newData, index) => {
-    const bill = new Bill({
-      _id: new mongoose.Types.ObjectId(),
+exports.createBill = async (req, res, next) => {
+  try {
+    const billCycle = await BillCycle.create({
+      cycle: req.body.cycle,
+      dueDate: req.body.dueDate
     });
-    const keys = Object.keys(req.body[index]);
-    const values = Object.values(req.body[index]);
-    for (let i = 0; i < keys.length; i += 1) {
-      bill[keys[i]] = values[i];
-    }
-    return bill;
-  });
-  Bill.collection.insertMany(newBills);
-  Profile.update(
-    { _id: req.user._id },
-    { $addToSet: { bills: newBills } }
-  )
-    .exec()
-    .then(result => {
-      res.status(200).json(result);
-    })
-    .catch(err => {
-      res.status(404).json({ error: err });
+    const bill = await Bill.create({
+      description: req.body.description,
+      defaultAmount: req.body.defaultAmount,
+      recurringDate: req.body.recurringDate,
+      billCycle: billCycle
     });
+    await Profile.update({_id: req.user._id}, {$addToSet: {bills: bill}});
+    res.status(201).json(bill);
+  }
+  catch (err) {
+    res.status(404).json({
+      error: err
+    });
+  }
 };
 
-exports.getBillById = (req, res, next) => {
-  Bill.findById(req.params.id)
-    .exec()
-    .then((bill) => {
-      res.json(bill);
-    })
-    .catch((err => {
-      res.status(404).json({
-        error: err
-      });
-    }));
+exports.getBillById = async (req, res, next) => {
+  try {
+    const bill = await Bill.findById(req.params.id);
+    res.json(bill);
+  }
+  catch (err) {
+    res.status(404).json({
+      error: err
+    });
+  }
 };
 
 exports.deleteBillById = (req, res, next) => {
@@ -179,4 +180,21 @@ exports.deleteAllProfileBills = (req, res, next) => {
   }).catch(err => {
     res.status(404).json({ Error: err });
   });
+};
+
+
+
+exports.getIntervals = (req, res, next) => {
+
+  /*
+  //get the bills that are monthy
+
+ weekly bill
+ made 5 weeks agO
+ sign into app now 
+ create 5 weeks worth of translations
+
+ get bill of last date 
+*/
+
 };

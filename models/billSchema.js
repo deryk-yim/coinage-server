@@ -3,6 +3,7 @@ const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const validator = require('validator');
 const Currency = require('mongoose-currency');
 
+
 const { Schema } = mongoose;
 
 const billSchema = new Schema({
@@ -15,10 +16,9 @@ const billSchema = new Schema({
     min: 0,
     required: false
   },
-  frequency: {
-    type: String,
-    enum: ['Monthly', 'Semi-Monthly', 'Bi-Weekly', 'Weekly'],
-    required: true
+  billCycle: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'BillCycle'
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
